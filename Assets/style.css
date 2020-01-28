@@ -1,0 +1,33 @@
+*, *::before, *::after{
+    box-sizing: border-box;
+    font-family: 'Alatsi', sans-serif;
+    /* background-color: #EEE2DC; */
+
+}
+
+
+.jumbotron {
+    text-align: center;
+    border-bottom: 4px solid black;
+    /* background-color: #bab2b5; */
+    /* padding: 25px; */
+}
+
+.fullDayContainer{
+    margin: 2%;
+    
+}
+
+.btn {
+    background-color: #e9ecef;
+    border: 1px black solid; 
+    /* box-shadow: 3px 3px 2px #EDC7B6; */
+    color: black;
+    /* font-size: 1.2em; */
+    padding: auto 10px auto 10px;
+    box-shadow: 3px 3px 2px #ac3b61;
+}
+
+/* .form-control {
+    background-color: #e9ecef;
+} */
