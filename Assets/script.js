@@ -1,5 +1,5 @@
-//Problems: an option to clear and overwrite
-//put the css in stylesheet
+//clear only works when page is reloaded
+//it does not trim the values
 
 $(document).ready(function() {
 
@@ -15,7 +15,6 @@ $(document).ready(function() {
 //start off function
 
     function init (){
-        console.log("init function runs");
         var savedTodosFromStorage =[];
         //call the todos that were entered
         savedTodosFromStorage = JSON.parse(localStorage.getItem("tasks"));
@@ -41,7 +40,6 @@ $(document).ready(function() {
 //current date in header function
 
     function todaysDate(){
-        console.log("todaydate-functionruns");
         $("#currentDay").text("Schedule for "+ currentDateEl); 
     }
 
@@ -62,7 +60,7 @@ $(document).ready(function() {
             $(holderEl).append(timeBlockEl);
 
         //2nd column- add textarea col
-            var textEl = $("<div class='col-lg-9'>");
+            var textEl = $("<div class='col-lg-10'>");
             //output time slot id and inputarea
             $(textEl).attr("data-text", officeHours[i]);
             $(textEl).append('<input type="todo" class="form-control" id="toDo'+ officeHours[i] + '">');
@@ -70,7 +68,7 @@ $(document).ready(function() {
             $(holderEl).append(textEl);
 
         //3rd column add save button col 
-            var saveButtonEl = $("<div class='col-lg-2'>");
+            var saveButtonEl = $("<div class='col-lg-1'>");
             //output save id and text 
             // $(saveButtonEl).append('<button type="submit" class="btn btn-light" id="Btn'+officeHours[i] +'"><i class="fa fa-save">save</i></button>');
             $(saveButtonEl).append('<button type="submit" class="btn btn-light" id="Btn'+officeHours[i] +'">save</button>');
@@ -85,38 +83,43 @@ $(document).ready(function() {
         //create and append clear Todos button
             $("#clearBtn").on("click", clearToDos);
 
-        //change rows depending on current time
+    //chnage row opacity depending on current time
             if(currentTimeEl == officeHours[i]){
-                $(timeBlockEl).css("background-color", "#ac3b61");
-                $(holderEl).css("border", "2px solid black");
+                $(timeBlockEl).css("background-color", "#732741");
+                $(holderEl).css("border", "2px solid #732741");
+                // $(timeBlockEl).attr("data-timeslot", officeHours[i]).text("Now: " + officeHours[i]+":00");
+                $(saveButtonEl).css("background-color", "#732741");
                 // $(holderEl).css("background-color", "#cbd3da")
             } else if (currentTimeEl > officeHours[i]){
                 $(holderEl).css("background-color", "#e9ecef");
                 $(timeBlockEl).css("background-color", "#ac3b61");
-                $(".btn").css("background-color", "#ac3b61");
-                $(".btn").css("color", "white");
+    
+                // $(".btn").css("background-color", "#ac3b61");
+                // $(".btn").css("color", "white");
                 // $(".btn").text("Passed");
-                $(holderEl).css("opacity", ".2");
+                $(holderEl).css("opacity", ".25");
             } else { 
                 $(holderEl).css("background-color", "#e9ecef")
-                $(holderEl).css("opacity", ".8");
+
+                // $(holderEl).css("opacity", ".85");
+                // $(".btn").css("background-color", "#ac3b61");
+                // $(".btn").css("color", "white");
+
+
             }
-
-        }
-
-    // populate with local storage tasks
-            console.log(tasks.length);
+            //retrieve the stored to dos and add them
+            // console.log(tasks.length);
             if(tasks && (tasks.length)){
-              for(var k =0; k<tasks.length; k++){
-                 
+                for(var k =0; k<tasks.length; k++){
                 //find time slot for index in the array
-                console.log(tasks[k].time);
-                console.log($(`[data-text="${tasks.time}"]`))
+                // console.log(tasks[k].time);
+                // console.log($(`[data-text="${tasks[k].time}"]`))
                 $(`[data-text="${tasks[k].time}"]`).text(tasks[k].description)
                 }
             }
+        }
+    } 
 
-    }     
 
 // function that stores the entered toDos
     function storeTodos() {
@@ -138,28 +141,26 @@ $(document).ready(function() {
                 console.log(task);
                 console.log(task.length);
 
-                //Check whether time slot is already in appointments array
-                if (tasks && (tasks.length > 0)) {
-                    // Look for the current time label in the appointments array
-                    // If it's found, return the index into the array for the corresponding object
-                    var indexForNewtasks = tasks.findIndex(function(item) {
+                //is there an entry in tasks already?
+                if (tasks && (tasks.length )) {
+                    var indexNewtasks = tasks.findIndex(function(item) {
                         console.log(item.time);
                         return item.time === indexBtn;
                     });
-                // }
+                
 
-                    // If there already is an entry in local storage for the given time slot
-                    if (indexForNewtasks >= 0) {
-                        var newtasks = [];  // New temporary array, to hold some values from appointments array
+                    // If timeslot is taken
+                    if (indexNewtasks >= 0) {
+                        var newtasks = [];  //temp array
 
-                        // Copy the elements from appointments that precede the found object into the temporary array
-                        for (var i = 0; i < indexForNewtasks; i++) {
-                            newtasks.push(tasks[i]);
+                        // Copy tasks into the temporary array
+                        for (var m = 0; m < indexNewtasks; m++) {
+                            newtasks.push(tasks[m]);
                         }
 
-                        // Copy the elements from appointments that follow the found object into the temporary array
-                        for (var j = indexForNewtasks + 1; j < tasks.length; j++) {
-                            newtasks.push(tasks[j]);
+                        // Copy tasks that follow the found object into the temporary array
+                        for (var n = indexNewtasks + 1; n < tasks.length; n++) {
+                            newtasks.push(tasks[n]);
                             console.log(newtasks);
                         }
 
@@ -173,6 +174,7 @@ $(document).ready(function() {
                     localStorage.removeItem("tasks");
                     }
                 }
+                
                 if(task.description.length>0){
                     tasks.push(task);
                 }
@@ -186,7 +188,21 @@ $(document).ready(function() {
 
 //click button and clear local storage
     function clearToDos(){
+        console.log("clear function runs");
+        // tasks=[];
+        // console.log(tasks.length);
+        // if(tasks && (tasks.length)){
+        // for(var k =0; k<tasks.length; k++){
+        //     //find time slot for index in the array
+        //     console.log(tasks[k].time);
+        //     // console.log($(`[data-text="${tasks[k].time}"]`))
+        //     $(`[data-text="${tasks[k].time}"]`).text(tasks[k].description)
+        //     }
+        // }
         localStorage.clear();
+        // storeTodos();
+        // renderTodos();
+
         }
 
 });
