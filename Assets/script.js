@@ -1,283 +1,194 @@
+//Problems: an option to clear and overwrite
+//put the css in stylesheet
+
 $(document).ready(function() {
+
+//global variables
 
     var currentDateEl = moment().format("MMMM Do YYYY");   
     var currentTimeEl =moment().format("H"); // Military Time
-    console.log(currentTimeEl);  
-   
+            console.log(currentTimeEl);  
     var officeHours= [8, 9,10,11,12,13,14,15,16,17,18];
+    var tasks =[];
 
 
-    //header with current date
-    
-    function todaysDate(){
-        $("#currentDay").text("Schedule for "+ currentDateEl); 
-        //style curretn day <p>
-        $("#currentDay").css("color", "#ac3b61");
-        $("#currentDay").css("font-size", "30px");
+//start off function
+
+    function init (){
+        console.log("init function runs");
+        var savedTodosFromStorage =[];
+        //call the todos that were entered
+        savedTodosFromStorage = JSON.parse(localStorage.getItem("tasks"));
+        console.log(savedTodosFromStorage);
+        //update tasks array
+        if(savedTodosFromStorage!== null){
+            tasks=savedTodosFromStorage;
+        }
+        //create today's date
+        todaysDate();
+        //create time slot body
+        createHourDivs();
+        //call the saved todos
+        storeTodos();
     }
-    todaysDate();
-
-    // callTask();
-    //body
 
 
-    //create one row with 3 colums for all 10 time slots
+//call start off function and tasks from local storage
+
+    init();
+  
+
+//current date in header function
+
+    function todaysDate(){
+        console.log("todaydate-functionruns");
+        $("#currentDay").text("Schedule for "+ currentDateEl); 
+    }
+
+
+//function that creates the body and time slots with one row with 3 colums for each slot
     function createHourDivs(){
         for (var i = 0; i < officeHours.length; i++) {
         // Create row
             var holderEl = $("<div class='row'>");
-      
             // id for row
-            $(holderEl).attr("id", officeHours[i]);
-
-            //div row styling
-            $(holderEl).css("margin", "10px");
-            $(holderEl).css("border", "1px black solid");
-            // $(holderEl).css("background-color", "white");
-            $(holderEl).css("background-color", "#e9ecef")
-            $(holderEl).css("box-shadow", "0 3px 2px #777");
-
+            $(holderEl).attr("data-holder", i);
             
         //1st column in row is time column
             var timeBlockEl = $("<div class='col-lg-1'>");
-            
             //time slot id and text/time
-            $(timeBlockEl).attr("id", officeHours[i]).text(officeHours[i]+":00");
-
-            //column 1 styling
-        
-            $(timeBlockEl).css("background-color", "#ac3b61");
-            $(timeBlockEl).css("color", "white");
-            $(timeBlockEl).css("font-size", "1.2em");
-            $(timeBlockEl).css("text-align", "center");
-            $(timeBlockEl).css("padding", "10px");
-            $(timeBlockEl).css("border", "1px solid black");
-
+             $(timeBlockEl).attr("data-timeslot", officeHours[i]).text(officeHours[i]+":00");
             //append time slots/column1 into div
             $(holderEl).append(timeBlockEl);
 
-
         //2nd column- add textarea col
             var textEl = $("<div class='col-lg-9'>");
-            
             //output time slot id and inputarea
-            $(textEl).attr("id", officeHours[i]);
+            $(textEl).attr("data-text", officeHours[i]);
             $(textEl).append('<input type="todo" class="form-control" id="toDo'+ officeHours[i] + '">');
-
-            //style text column
-            $(textEl).css("padding", "10px");            
-            $(textEl).css("font-size", "1.2em");
-            $(textEl).css("border-radius", "5px");
-
             //append text slots into div
             $(holderEl).append(textEl);
 
         //3rd column add save button col 
             var saveButtonEl = $("<div class='col-lg-2'>");
-            
             //output save id and text 
-            $(saveButtonEl).append('<button type="submit" class="btn btn-light" id="Btn'+officeHours[i]+'">save</button>');
-            
+            // $(saveButtonEl).append('<button type="submit" class="btn btn-light" id="Btn'+officeHours[i] +'"><i class="fa fa-save">save</i></button>');
+            $(saveButtonEl).append('<button type="submit" class="btn btn-light" id="Btn'+officeHours[i] +'">save</button>');
             //button column styling but btn itself in css
-            $(saveButtonEl).attr("id", officeHours[i]);
-            $(saveButtonEl).css("text-align", "center");
-            $(saveButtonEl).css("font-size", "1.2em");
-            $(saveButtonEl).css("padding", "10px");
-            $(".btn").css("box-shadow", "3px 3px 2px #ac3b61");
-
-
+            $(saveButtonEl).attr("data-saveBtn", officeHours[i]);
             //append buttons into div
             $(holderEl).append(saveButtonEl);
-            
-            
+
         //append rows into into container
             $(".fullDayContainer").append(holderEl);
 
+        //create and append clear Todos button
+            $("#clearBtn").on("click", clearToDos);
+
         //change rows depending on current time
-
             if(currentTimeEl == officeHours[i]){
-                // $(timeBlockEl).css("font-size", "1.2em");
                 $(timeBlockEl).css("background-color", "#ac3b61");
-                //$(holderEl).css("border", "5px solid black");
-                //$(timeBlockEl).css("color", "black");
-                // $(".btn").css("box-shadow", "3px 3px 2px #ac3b61");
                 $(holderEl).css("border", "2px solid black");
-
+                // $(holderEl).css("background-color", "#cbd3da")
             } else if (currentTimeEl > officeHours[i]){
                 $(holderEl).css("background-color", "#e9ecef");
                 $(timeBlockEl).css("background-color", "#ac3b61");
                 $(".btn").css("background-color", "#ac3b61");
                 $(".btn").css("color", "white");
-
-                // $(".btn").css("color", "white")
-                $(".btn").text("Passed");
-                //$(".form-control").css("background-color","#553D67" );
-                $(holderEl).css("opacity", ".3");
-
+                // $(".btn").text("Passed");
+                $(holderEl).css("opacity", ".2");
             } else { 
                 $(holderEl).css("background-color", "#e9ecef")
-                // $(holderEl).css("background-color", "white");
-                
-
+                $(holderEl).css("opacity", ".8");
             }
-          }
-          
+
+        }
+
+    // populate with local storage tasks
+            console.log(tasks.length);
+            if(tasks && (tasks.length)){
+              for(var k =0; k<tasks.length; k++){
+                 
+                //find time slot for index in the array
+                console.log(tasks[k].time);
+                console.log($(`[data-text="${tasks.time}"]`))
+                $(`[data-text="${tasks[k].time}"]`).text(tasks[k].description)
+                }
+            }
+
+    }     
+
+// function that stores the entered toDos
+    function storeTodos() {
+        console.log("storeTODO-functionruns");
+            // Stringify and set "todos" key in localStorage to todos array
+            $(".btn").on("click", function(event){
+                console.log(event.target.id);
+                var element = event.target;
+                var indexBtn = element.parentElement.getAttribute("data-saveBtn");
+                console.log(indexBtn);
+                
+                var taskInput = $('#toDo'+indexBtn+'').val();
+                console.log(taskInput);
+
+                var task ={
+                    time: indexBtn,
+                    description: taskInput
+                };
+                console.log(task);
+                console.log(task.length);
+
+                //Check whether time slot is already in appointments array
+                if (tasks && (tasks.length > 0)) {
+                    // Look for the current time label in the appointments array
+                    // If it's found, return the index into the array for the corresponding object
+                    var indexForNewtasks = tasks.findIndex(function(item) {
+                        console.log(item.time);
+                        return item.time === indexBtn;
+                    });
+                // }
+
+                    // If there already is an entry in local storage for the given time slot
+                    if (indexForNewtasks >= 0) {
+                        var newtasks = [];  // New temporary array, to hold some values from appointments array
+
+                        // Copy the elements from appointments that precede the found object into the temporary array
+                        for (var i = 0; i < indexForNewtasks; i++) {
+                            newtasks.push(tasks[i]);
+                        }
+
+                        // Copy the elements from appointments that follow the found object into the temporary array
+                        for (var j = indexForNewtasks + 1; j < tasks.length; j++) {
+                            newtasks.push(tasks[j]);
+                            console.log(newtasks);
+                        }
+
+                        // Point appointments to our new temporary array, if it exists, or to an empty array
+                        if (newtasks && (newtasks.length > 0)) {
+                            tasks = newtasks;
+                        } else {
+                            tasks = [];
+                        }
+
+                    localStorage.removeItem("tasks");
+                    }
+                }
+                if(task.description.length>0){
+                    tasks.push(task);
+                }
+        
+                // Add to local storage
+                localStorage.setItem('tasks',JSON.stringify(tasks));
+                          
+            });     
     }
 
-    createHourDivs();
 
-    //set and get input to local storage
-
-    $(".btn").on("click", function(element){
-        console.log(element.target.id);
-        for (i = 8; i <= 18; i++) {
-            var task = $('#toDo' + i).val();
-            console.log(task)
-            localStorage.setItem('task' + i, task);
-            //get Item
-            $('#toDo' + i).val(task) = localStorage.getItem("task" + i);;
+//click button and clear local storage
+    function clearToDos(){
+        localStorage.clear();
         }
-    });
 
-    // function callTask() {
-    //     $('#toDo' + i).val(task) = localStorage.getItem("task" + i);;
-    // }
-    
-
-// for (i = 8; i <= 18; i++) {
-//     var task = $('#toDo' + i).val();
-//     var saveTask= localStorage.setItem('task' + i, task);
-//     console.log(task)
-
-//     var callTask = localStorage.getItem("task" + i);
-
-    //var timeSlotToDoEl = $("#toDo"+officeHours[i]);
-
-    // var clickedButtonEl;
-
-    // var divElementIds =[
-    //     {
-    //         buttonId: "Btn8",
-    //         taskId: $("#toDo8")
-    //     },
-    //     {
-    //         buttonId: "Btn9",
-    //         taskId: $("#toDo9")
-    //     },
-    //     {
-    //         buttonId: "Btn10",
-    //         taskId: $("#toDo10")
-    //     },
-    //     {
-    //         buttonId: "Btn11",
-    //         taskId: $("#toDo11")
-    //     },
-    //     {
-    //         buttonId: "Btn12",
-    //         taskId: $("#toDo12")
-    //     },
-    //     {
-    //         buttonId: "Btn13",
-    //         taskId: $("#toDo13")
-    //     },
-    //     {
-    //         buttonId: "Btn14",
-    //         taskId: $("#toDo14")
-    //     },
-    //     {
-    //         buttonId: "Btn15",
-    //         taskId: $("#toDo15")
-    //     },
-    //     {
-    //         buttonId: "Btn16",
-    //         taskId: $("#toDo16")
-    //     },
-    //     {
-    //         buttonId: "Btn17",
-    //         taskId: $("#toDo17")
-    //     },
-    //     {
-    //         buttonId: "Btn18",
-    //         taskId: $("#toDo18")
-    //     }
-    // ];
-    
-    // ""Btn9", "Btn10","Btn11","Btn12","Btn13","Btn14","Btn15","Btn16","Btn17","Btn18"] },
-    //     {taskIds: ["toDo8", "toDo9","toDo10","toDo11","toDo12","toDo13","toDo14","toDo15","toDo16","toDo17","toDo18",]}
-    // ]
-    // }
-    // {buttonId: ["Btn8","Btn9", "Btn10","Btn11","Btn12","Btn13","Btn14","Btn15","Btn16","Btn17","Btn18"] },
-    //     {taskIds: ["toDo8", "toDo9","toDo10","toDo11","toDo12","toDo13","toDo14","toDo15","toDo16","toDo17","toDo18",]}
-    // ]
-    // }
+});
 
     
-
-    // $("#loadTasks").click(function () {
-    //     for (i = 9; i <= 17; ++i) {
-    //         var task = localStorage.getItem("task" + i);
-    //         $('#activityDescription' + i).val(task);
-    //     }
-            
-    //     });
-
-            // localStorage.setItem('storeObj', JSON.stringify(divElementIds));
-
-            // var getObject = JSON.parse(localStorage.getItem('storeObj'));
-            
-            // // var clickedButtonEl = divElementIds.buttonId;
-            // // var inputEl = divElementIds.taskId;
-            // for (var j=0; j<divElementIds.length; j++){
-            //     if(element.target.id === divElementIds[j].buttonId){
-            //         // localStorage.("divElementIds[j].taskId", divElementIds[j].taskId.val());
-            //         localStorage.setItem("divElementIds[j].taskId",getObject[j].taskId )
-            //         // divElementIds[j].taskId.value = localStorage.;
-            //         // localStorage.getItem('initials') + ': '+ localStorage.getItem('score');
-
-            //         // localStorage.setItem("divElementIds[j].taskId", divElementIds[j].taskId.value);
-            //         // localStorage.getItem
-            //         // localStorage.content=$(divElementIds[j].taskId.html();
-    //         //         console.log(localStorage);
-    //         //     }
-    //         };
-    // });
-
-//     $('#test').html("Test");
-// localStorage.content = $('#test').html();
-// $('#test').html(localStorage.content);
-
-
-
-            // if(element.target.id === clickedButtonEl[0]){
-            //     localStorage.setItem("inputEl[0]", inputEl[0]);
-            // } else if (element.target.id === clickedButtonEl[1]){
-            //     localStorage.setItem("inputEl[0]", inputEl[1]);
-            // } else if (element.target.id === clickedButtonEl[2]){
-            //     localStorage.setItem("inputEl[0]", inputEl[2]);
-            // } else if (element.target.id === clickedButtonEl[3]){
-            //     localStorage.setItem("inputEl[0]", inputEl[3]);
-            // } else if (element.target.id === clickedButtonEl[4]){
-            //     localStorage.setItem("inputEl[0]", inputEl[4]);
-            // } else if (element.target.id === clickedButtonEl[5]){
-            //     localStorage.setItem("inputEl[0]", inputEl[5]);
-            // } else if (element.target.id === clickedButtonEl[6]){
-            //     localStorage.setItem("inputEl[0]", inputEl[6]);
-            // } else if (element.target.id === clickedButtonEl[7]){
-            //     localStorage.setItem("inputEl[0]", inputEl[7]);
-            // } else if (element.target.id === clickedButtonEl[8]){
-            //     localStorage.setItem("inputEl[0]", inputEl[8]);
-            // } else if (element.target.id === clickedButtonEl[9]){
-            //     localStorage.setItem("inputEl[0]", inputEl[9]);
-            // } else if (element.target.id === clickedButtonEl[10]){
-            //     localStorage.setItem("inputEl[0]", inputEl[10]);
-            // var tasktoSaveEl= $(".form-control.").val();
-            // localStorage.setItem("tasktoSaveEl"+number, tasktoSaveEl);
-            // console.log(clickedButtonEl);
-            // console.log(tasktoSaveEl);
-            
-        // });
-
-      
-    
-    
-    });
