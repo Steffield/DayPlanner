@@ -70,8 +70,8 @@ $(document).ready(function() {
         //3rd column add save button col 
             var saveButtonEl = $("<div class='col-lg-1'>");
             //output save id and text 
-            // $(saveButtonEl).append('<button type="submit" class="btn btn-light" id="Btn'+officeHours[i] +'"><i class="fa fa-save">save</i></button>');
-            $(saveButtonEl).append('<button type="submit" class="btn btn-light" id="Btn'+officeHours[i] +'">save</button>');
+            $(saveButtonEl).append('<button type="submit" class="btn btn-light" id="Btn'+officeHours[i] +'">Save <i class="fa fa-save"></i></button>');
+            // $(saveButtonEl).append('<button type="submit" class="btn btn-light" id="Btn'+officeHours[i] +'">save</button>');
             //button column styling but btn itself in css
             $(saveButtonEl).attr("data-saveBtn", officeHours[i]);
             //append buttons into div
@@ -177,6 +177,8 @@ $(document).ready(function() {
                 
                 if(task.description.length>0){
                     tasks.push(task);
+                // } else {
+                //     clear($(".form-control"));
                 }
         
                 // Add to local storage
@@ -200,6 +202,15 @@ $(document).ready(function() {
         //     }
         // }
         localStorage.clear();
+        // for(var i=0; i<officeHours.length; i++){
+        //     task ={
+        //         time: indexBtn,
+        //         description: taskInput
+        //     };
+        //     taskInput ="";
+        // //     tasks
+
+        // }
         // storeTodos();
         // renderTodos();
 

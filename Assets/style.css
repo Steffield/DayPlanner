@@ -28,16 +28,20 @@
     /* box-shadow: 3px 3px 2px #EDC7B6; */
     color: #732741;;
     /* font-size: 1.2em; */
-    /* padding: 10px; */
+    padding: 10px;
     /* box-shadow: 3px 3px 2px #ac3b61; */
     cursor: pointer;
 }
   
   /* / background on mouse-over */ 
   .btn:hover {
-    background-color: #ac3b61;
+    background-color: #777;
   }
 
+    i{
+    font-family: "Font Awesome 5 Free"; font-weight: 900; content: "\f007";
+    }
+    
   #clearBtn{
       margin: 20px;
       text-align: center;
