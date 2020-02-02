@@ -1,5 +1,4 @@
 //clear only works when page is reloaded
-//it does not trim the values
 
 $(document).ready(function() {
 
@@ -8,7 +7,8 @@ $(document).ready(function() {
     var currentDateEl = moment().format("MMMM Do YYYY");   
     var currentTimeEl =moment().format("H"); // Military Time
             console.log(currentTimeEl);  
-    var officeHours= [8, 9,10,11,12,13,14,15,16,17,18];
+    var officeHours= [8,9,10,11,12,13,14,15,16,17,18];
+    var AMPMList = ["8 AM","9 AM","10 AM", "11 AM","12 AM","1 PM","2 PM", "3 PM","4 PM","5 PM","6 PM"];
     var tasks =[];
 
 
@@ -33,7 +33,6 @@ $(document).ready(function() {
 
 
 //call start off function and tasks from local storage
-
     init();
   
 
@@ -55,7 +54,9 @@ $(document).ready(function() {
         //1st column in row is time column
             var timeBlockEl = $("<div class='col-lg-1'>");
             //time slot id and text/time
-             $(timeBlockEl).attr("data-timeslot", officeHours[i]).text(officeHours[i]+":00");
+             $(timeBlockEl).attr("data-timeslot", officeHours[i])
+             $(timeBlockEl).text(AMPMList[i]);
+              //  $(timeBlockEl).text([i]+":00");
             //append time slots/column1 into div
             $(holderEl).append(timeBlockEl);
 
@@ -80,32 +81,17 @@ $(document).ready(function() {
         //append rows into into container
             $(".fullDayContainer").append(holderEl);
 
-        //create and append clear Todos button
-            $("#clearBtn").on("click", clearToDos);
-
     //chnage row opacity depending on current time
             if(currentTimeEl == officeHours[i]){
                 $(timeBlockEl).css("background-color", "#732741");
                 $(holderEl).css("border", "2px solid #732741");
-                // $(timeBlockEl).attr("data-timeslot", officeHours[i]).text("Now: " + officeHours[i]+":00");
                 $(saveButtonEl).css("background-color", "#732741");
-                // $(holderEl).css("background-color", "#cbd3da")
             } else if (currentTimeEl > officeHours[i]){
                 $(holderEl).css("background-color", "#e9ecef");
                 $(timeBlockEl).css("background-color", "#ac3b61");
-    
-                // $(".btn").css("background-color", "#ac3b61");
-                // $(".btn").css("color", "white");
-                // $(".btn").text("Passed");
                 $(holderEl).css("opacity", ".25");
             } else { 
                 $(holderEl).css("background-color", "#e9ecef")
-
-                // $(holderEl).css("opacity", ".85");
-                // $(".btn").css("background-color", "#ac3b61");
-                // $(".btn").css("color", "white");
-
-
             }
             //retrieve the stored to dos and add them
             // console.log(tasks.length);
@@ -126,6 +112,7 @@ $(document).ready(function() {
         console.log("storeTODO-functionruns");
             // Stringify and set "todos" key in localStorage to todos array
             $(".btn").on("click", function(event){
+                // event.preventDefault();
                 console.log(event.target.id);
                 var element = event.target;
                 var indexBtn = element.parentElement.getAttribute("data-saveBtn");
@@ -141,80 +128,20 @@ $(document).ready(function() {
                 console.log(task);
                 console.log(task.length);
 
-                //is there an entry in tasks already?
-                if (tasks && (tasks.length )) {
-                    var indexNewtasks = tasks.findIndex(function(item) {
-                        console.log(item.time);
-                        return item.time === indexBtn;
-                    });
-                
+                tasks.push(task);
 
-                    // If timeslot is taken
-                    if (indexNewtasks >= 0) {
-                        var newtasks = [];  //temp array
-
-                        // Copy tasks into the temporary array
-                        for (var m = 0; m < indexNewtasks; m++) {
-                            newtasks.push(tasks[m]);
-                        }
-
-                        // Copy tasks that follow the found object into the temporary array
-                        for (var n = indexNewtasks + 1; n < tasks.length; n++) {
-                            newtasks.push(tasks[n]);
-                            console.log(newtasks);
-                        }
-
-                        // Point appointments to our new temporary array, if it exists, or to an empty array
-                        if (newtasks && (newtasks.length > 0)) {
-                            tasks = newtasks;
-                        } else {
-                            tasks = [];
-                        }
-
-                    localStorage.removeItem("tasks");
-                    }
-                }
-                
-                if(task.description.length>0){
-                    tasks.push(task);
-                // } else {
-                //     clear($(".form-control"));
-                }
-        
-                // Add to local storage
                 localStorage.setItem('tasks',JSON.stringify(tasks));
                           
             });     
     }
-
+  //create and append clear Todos button
+  $("#clearBtn").on("click", clearToDos);
 
 //click button and clear local storage
     function clearToDos(){
         console.log("clear function runs");
-        // tasks=[];
-        // console.log(tasks.length);
-        // if(tasks && (tasks.length)){
-        // for(var k =0; k<tasks.length; k++){
-        //     //find time slot for index in the array
-        //     console.log(tasks[k].time);
-        //     // console.log($(`[data-text="${tasks[k].time}"]`))
-        //     $(`[data-text="${tasks[k].time}"]`).text(tasks[k].description)
-        //     }
-        // }
         localStorage.clear();
-        // for(var i=0; i<officeHours.length; i++){
-        //     task ={
-        //         time: indexBtn,
-        //         description: taskInput
-        //     };
-        //     taskInput ="";
-        // //     tasks
-
-        // }
-        // storeTodos();
-        // renderTodos();
-
-        }
+    }
 
 });
 
