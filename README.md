@@ -4,7 +4,7 @@ Day Planner Application
 
 This is a calendar application that allows you to save events for each hour of the day. The app runs in the browser and features dynamically updated HTML and CSS powered by jQuery.
 
-It displays standard business hours (8:00 to 18:00) and each time slot represents one hour and contains the following:
+It displays standard business hours (8:00am to 6:00pm) and each time slot represents one hour and contains the following:
 
 The time
 
