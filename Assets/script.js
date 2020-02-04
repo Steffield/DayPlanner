@@ -1,7 +1,9 @@
 //clear only works when page is reloaded
 
 $(document).ready(function() {
-
+//=================================================================================================
+//variables
+//=================================================================================================
 //global variables
 
     var currentDateEl = moment().format("MMMM Do YYYY");   
@@ -11,6 +13,9 @@ $(document).ready(function() {
     var AMPMList = ["8 AM","9 AM","10 AM", "11 AM","12 AM","1 PM","2 PM", "3 PM","4 PM","5 PM","6 PM"];
     var tasks =[];
 
+//=================================================================================================
+//functions
+//=================================================================================================
 
 //start off function
 
@@ -72,6 +77,7 @@ $(document).ready(function() {
             var saveButtonEl = $("<div class='col-lg-1'>");
             //output save id and text 
             $(saveButtonEl).append('<button type="submit" class="btn btn-light" id="Btn'+officeHours[i] +'">Save <i class="fa fa-save"></i></button>');
+            // $(saveButtonEl).append('<button type="clear" class="btn btn-light" id="clearBtn'+officeHours[i] +'"><i class="fa fa-trash"></i></button>');
             // $(saveButtonEl).append('<button type="submit" class="btn btn-light" id="Btn'+officeHours[i] +'">save</button>');
             //button column styling but btn itself in css
             $(saveButtonEl).attr("data-saveBtn", officeHours[i]);
@@ -94,12 +100,8 @@ $(document).ready(function() {
                 $(holderEl).css("background-color", "#e9ecef")
             }
             //retrieve the stored to dos and add them
-            // console.log(tasks.length);
             if(tasks && (tasks.length)){
                 for(var k =0; k<tasks.length; k++){
-                //find time slot for index in the array
-                // console.log(tasks[k].time);
-                // console.log($(`[data-text="${tasks[k].time}"]`))
                 $(`[data-text="${tasks[k].time}"]`).text(tasks[k].description)
                 }
             }
@@ -120,26 +122,30 @@ $(document).ready(function() {
                 
                 var taskInput = $('#toDo'+indexBtn+'').val();
                 console.log(taskInput);
-
+                
+                //object for tasks array
                 var task ={
                     time: indexBtn,
                     description: taskInput
                 };
                 console.log(task);
-                console.log(task.length);
+                // console.log(tasks.length);
 
+                //add a time and description as "task" to the "tasks" array
                 tasks.push(task);
-
+                //set to local storage
                 localStorage.setItem('tasks',JSON.stringify(tasks));
                           
             });     
     }
-  //create and append clear Todos button
-  $("#clearBtn").on("click", clearToDos);
 
-//click button and clear local storage
+
+  //create and append clear Todos button
+
+$("#clearBtn").on("click", clearToDos);
+
+    //click button and clear local storage
     function clearToDos(){
-        console.log("clear function runs");
         localStorage.clear();
     }
 
