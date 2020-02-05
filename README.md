@@ -18,6 +18,6 @@ Near the top of the calendar, the application dispalys the current day. Each hou
 
 The Moment.js library was used to work with date and time.
 
-<img src="./Assets/dayPlanner.png">
+<img src="./Assets/Planner.png">
 
 <a href="https://steffield.github.io/DayPlanner/">Day Planner Application</a>
