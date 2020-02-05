@@ -69,7 +69,7 @@ $(document).ready(function() {
             var textEl = $("<div class='col-lg-10'>");
             //output time slot id and inputarea
             $(textEl).attr("data-text", officeHours[i]);
-            $(textEl).append('<input type="todo" class="form-control" id="toDo'+ officeHours[i] + '">');
+            $(textEl).append('<input type="text" class="form-control" id="toDo'+ officeHours[i] + '">');
             //append text slots into div
             $(holderEl).append(textEl);
 
@@ -100,11 +100,17 @@ $(document).ready(function() {
                 $(holderEl).css("background-color", "#e9ecef")
             }
             //retrieve the stored to dos and add them
+            //retrieve the stored to dos and add them
             if(tasks && (tasks.length)){
                 for(var k =0; k<tasks.length; k++){
-                $(`[data-text="${tasks[k].time}"]`).text(tasks[k].description)
+                    $(`[data-text="${tasks[k].time}"] > input`).val(tasks[k].description)
                 }
             }
+    //         if(tasks && (tasks.length)){
+    //             for(var k =0; k<tasks.length; k++){
+    //             $(`[data-text="${tasks[k].time}"]`).text(tasks[k].description)
+    //             }
+    //         }
         }
     } 
 
@@ -146,7 +152,15 @@ $("#clearBtn").on("click", clearToDos);
 
     //click button and clear local storage
     function clearToDos(){
-        localStorage.clear();
+        
+        for(var k =0; k<officeHours.length; k++){
+           $(".form-control").val('');
+            $(`[data-text="[${officeHours[k]}]"] > input`).val(''); 
+            localStorage.clear();
+                    
+        }
+    
+        
     }
 
 });
