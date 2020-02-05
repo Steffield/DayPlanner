@@ -6,11 +6,13 @@ This is a calendar application that allows you to save events for each hour of t
 
 It displays standard business hours (8:00am to 6:00pm) and each time slot represents one hour and contains the following:
 
-The time
+-The time
 
-A field to hold user input
+-A field to hold user input
 
-A save button
+-A save button
+
+-A button that clears all to dos
 
 Clicking on the save button will store the time and user input in localStorage.
 
